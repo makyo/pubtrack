@@ -1,0 +1,2 @@
+[flake8]
+exclude = .git,.tox,venv,manage.py,*/migrations
