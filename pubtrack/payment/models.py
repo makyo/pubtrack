@@ -114,7 +114,8 @@ class Payout(models.Model):
 
 
 class Report(models.Model):
-    """Report represents a report of payment activity for a variety of types."""
+    """Report represents a report of payment activity for a variety of types.
+    """
 
     date_start = models.DateField(null=True, blank=True)
     date_end = models.DateField(null=True, blank=True)
