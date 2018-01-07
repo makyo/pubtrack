@@ -9,33 +9,18 @@ from tracker.utils.json import (
 
 
 def get_actor(request, actor_id):
-    # depth = request.GET.get('depth', 0)
+    """Retrieve an actor and return a JSON blob of its info."""
     try:
         actor = Actor.objects.get(pk=actor_id)
     except Actor.DoesNotExist:
         return error(404, 'actor not found')
-    response = {
-        'name': actor.name,
-        'type': actor.actor_type,
-        'pseudonym': actor.pseudonym,
-        'created': actor.created.isoformat(' '),
-        'updated': actor.updated.isoformat(' '),
-        'notes': actor.notes,
-    }
-    return success(response)
+    return success(actor.json_repr())
 
 
 def get_group(request, group_id):
-    # depth = request.GET.get('depth', 0)
+    """Retrieve an group and return a JSON blob of its info."""
     try:
         group = Group.objects.get(pk=group_id)
     except Group.DoesNotExist:
         return error(404, 'group not found')
-    response = {
-        'name': group.name,
-        'type': group.group_type,
-        'created': group.created.isoformat(' '),
-        'updated': group.updated.isoformat(' '),
-        'notes': group.notes,
-    }
-    return success(response)
+    return success(group.json_repr())
