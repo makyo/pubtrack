@@ -23,6 +23,8 @@ class Publication(models.Model):
         on_delete=models.CASCADE)
     group = models.ForeignKey(
         Group,
+        blank=True,
+        null=True,
         on_delete=models.CASCADE)
     publication_type = models.CharField(
         max_length=30, choices=PUBLICATION_TYPES)
@@ -33,6 +35,7 @@ class Publication(models.Model):
         on_delete=models.CASCADE)
     notes = models.TextField(blank=True)
     created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
 
 class Step(models.Model):
@@ -85,7 +88,7 @@ class Step(models.Model):
     publication = models.ForeignKey(
         Publication,
         on_delete=models.CASCADE)
-    step = models.CharField(max_length=50, choices=STEP_TYPES)
+    step_type = models.CharField(max_length=50, choices=STEP_TYPES)
     created = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True)
 
@@ -100,8 +103,8 @@ class Attachment(models.Model):
         ('amendment', 'Contract amendment'),
     )
 
-    publication = models.ForeignKey(
-        Publication,
+    step = models.ForeignKey(
+        Step,
         on_delete=models.CASCADE)
     attachment_type = models.CharField(max_length=10, choices=ATTACHMENT_TYPES)
     attachment = models.FileField(upload_to='attachments/%Y/%m/%d/')
