@@ -16,12 +16,10 @@ class Group(models.Model):
     updated = models.DateTimeField(auto_now=True)
     notes = models.TextField(blank=True)
 
-
     def __str__(self):
         return '{} ({})'.format(
             self.name,
             self.get_group_type_display())
-
 
     def json_repr(self):
         return {
@@ -34,8 +32,8 @@ class Group(models.Model):
             'members': [
                 actor.json_repr(
                     include_groups=False,
-                    include_publications=False) for actor in \
-                    self.actor_set.all()]
+                    include_publications=False)
+                for actor in self.actor_set.all()]
         }
 
 
@@ -60,12 +58,10 @@ class Actor(models.Model):
     updated = models.DateTimeField(auto_now=True)
     notes = models.TextField(blank=True)
 
-
     def __str__(self):
         return '{} ({})'.format(
             self.name,
             self.get_actor_type_display())
-
 
     def json_repr(self, include_groups=True, include_publications=True):
         actor_obj = {

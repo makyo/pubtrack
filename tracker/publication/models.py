@@ -37,13 +37,11 @@ class Publication(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
-
     def __str__(self):
         return 'Publication: {} ({}) by {}'.format(
             self.title,
             self.get_publication_type_display(),
             self.creator)
-
 
     def json_repr(self):
         publication_obj = {
@@ -135,12 +133,10 @@ class Step(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True)
 
-
     def __str__(self):
         return 'Step: {} for {}'.format(
             self.get_step_type_display(),
             self.publication.title)
-
 
     def json_repr(self):
         return {
@@ -149,7 +145,7 @@ class Step(models.Model):
             'created': self.created.isoformat(' '),
             'notes': self.notes,
             'attachments': [
-                attachment.json_repr() for attachment in \
+                attachment.json_repr() for attachment in
                 self.attachment_set.all()],
         }
 
@@ -172,12 +168,10 @@ class Attachment(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True)
 
-
     def __str__(self):
         return 'Attachment: {} attached to {}'.format(
             self.get_attachment_type_display(),
             self.step)
-
 
     def json_repr(self):
         return {
