@@ -38,6 +38,49 @@ class Publication(models.Model):
     updated = models.DateTimeField(auto_now=True)
 
 
+    def __str__(self):
+        return 'Publication: {} ({}) by {}'.format(
+            self.title,
+            self.get_publication_type_display(),
+            self.creator)
+
+
+    def json_repr(self):
+        publication_obj = {
+            'id': self.id,
+            'title': self.title,
+            'type': self.publication_type,
+            'type_display': self.get_publication_type_display(),
+            'notes': self.notes,
+            'creator': {
+                'name': self.creator.name,
+                'type': self.creator.actor_type,
+                'type_display': self.creator.get_actor_type_display(),
+                'id': self.creator.id,
+            },
+            'created': self.created.isoformat(' '),
+            'updated': self.updated.isoformat(' '),
+            'steps': [step.json_repr() for step in self.step_set.all()],
+        }
+        if self.group:
+            publication_obj['group'] = {
+                'id': self.group.id,
+                'type': self.group.group_type,
+                'type_display': self.group.get_group_type_display(),
+                'name': self.group.name,
+            }
+        if self.parent:
+            def build_parent(obj, parent):
+                obj['parent'] = {
+                    'id': parent.id,
+                    'title': parent.title,
+                }
+                if parent.parent:
+                    build_parent(obj['parent'], parent.parent)
+            build_parent(publication_obj, self.parent)
+        return publication_obj
+
+
 class Step(models.Model):
     """Step represents a step in the process of publication."""
 
@@ -93,6 +136,24 @@ class Step(models.Model):
     notes = models.TextField(blank=True)
 
 
+    def __str__(self):
+        return 'Step: {} for {}'.format(
+            self.get_step_type_display(),
+            self.publication.title)
+
+
+    def json_repr(self):
+        return {
+            'type': self.step_type,
+            'type_display': self.get_step_type_display(),
+            'created': self.created.isoformat(' '),
+            'notes': self.notes,
+            'attachments': [
+                attachment.json_repr() for attachment in \
+                self.attachment_set.all()],
+        }
+
+
 class Attachment(models.Model):
     """Attachment represents a file attached to a publication."""
 
@@ -110,3 +171,21 @@ class Attachment(models.Model):
     attachment = models.FileField(upload_to='attachments/%Y/%m/%d/')
     created = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True)
+
+
+    def __str__(self):
+        return 'Attachment: {} attached to {}'.format(
+            self.get_attachment_type_display(),
+            self.step)
+
+
+    def json_repr(self):
+        return {
+            'type': self.attachment_type,
+            'type_display': self.get_attachment_type_display(),
+            'created': self.created.isoformat(' '),
+            'name': self.attachment.name,
+            'size': self.attachment.size,
+            'url': self.attachment.url,
+            'notes': self.notes,
+        }

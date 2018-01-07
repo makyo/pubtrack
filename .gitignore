@@ -54,6 +54,7 @@ coverage.xml
 *.log
 local_settings.py
 *.sqlite3
+tracker/media
 
 # Flask stuff:
 instance/
