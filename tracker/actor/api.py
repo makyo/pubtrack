@@ -1,5 +1,3 @@
-import json
-
 from .models import (
     Actor,
     Group,
@@ -11,7 +9,7 @@ from tracker.utils.json import (
 
 
 def get_actor(request, actor_id):
-    depth = request.GET.get('depth', 0)
+    # depth = request.GET.get('depth', 0)
     try:
         actor = Actor.objects.get(pk=actor_id)
     except Actor.DoesNotExist:
@@ -28,7 +26,7 @@ def get_actor(request, actor_id):
 
 
 def get_group(request, group_id):
-    depth = request.GET.get('depth', 0)
+    # depth = request.GET.get('depth', 0)
     try:
         group = Group.objects.get(pk=group_id)
     except Group.DoesNotExist:
