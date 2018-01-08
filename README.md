@@ -1,5 +1,5 @@
 # Tracker
 
-[![Build Status](https://travis-ci.org/OpenFurry/tracker.svg?branch=master)](https://travis-ci.org/OpenFurry/tracker)
+[![Build Status](https://travis-ci.org/hybridink/tracker.svg?branch=master)](https://travis-ci.org/hybridink/tracker)
 
 Publication tracker
