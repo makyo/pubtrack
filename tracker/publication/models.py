@@ -335,12 +335,12 @@ class Step(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     notes = models.TextField(blank=True)
 
-    def save(self, force=False):
+    def save(self, force=False, *args, **kwargs):
         if not force:
             try:
                 prev_step = self.publication.step_set.order_by('-created')[0]
                 prev = prev_step.step_type
-            except Publication.DoesNotExist:
+            except (Publication.DoesNotExist, IndexError):
                 super(Step, self).save()
                 return
             if prev in FINAL_STEPS:
@@ -351,7 +351,7 @@ class Step(models.Model):
                 raise Step.StepReverseViolation(prev)
             if self.step_type not in STEP_FLOW[prev]:
                 raise Step.StepOrderViolation(prev)
-        super(Step, self).save()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return 'Step: {} for {}'.format(
