@@ -5,12 +5,13 @@ from django.urls import (
 )
 
 from actor.urls import actor_api
+from publication.urls import publication_api
 
 
 api = [
     path('actors/', include(actor_api)),
     # path('payments/', include(payment_api)),
-    # path('publications/', include(publication_api)),
+    path('publications/', include(publication_api)),
 ]
 
 urlpatterns = [

@@ -17,6 +17,7 @@ class Publication(models.Model):
         ('story', 'Short Story',)
     )
 
+    slug = models.SlugField()
     title = models.CharField(max_length=1000)
     creator = models.ForeignKey(
         Actor,
@@ -45,7 +46,7 @@ class Publication(models.Model):
 
     def json_repr(self):
         publication_obj = {
-            'id': self.id,
+            'id': self.slug,
             'title': self.title,
             'type': self.publication_type,
             'type_display': self.get_publication_type_display(),
@@ -54,7 +55,7 @@ class Publication(models.Model):
                 'name': self.creator.name,
                 'type': self.creator.actor_type,
                 'type_display': self.creator.get_actor_type_display(),
-                'id': self.creator.id,
+                'id': self.creator.slug,
             },
             'created': self.created.isoformat(' '),
             'updated': self.updated.isoformat(' '),
@@ -62,7 +63,7 @@ class Publication(models.Model):
         }
         if self.group:
             publication_obj['group'] = {
-                'id': self.group.id,
+                'id': self.group.slug,
                 'type': self.group.group_type,
                 'type_display': self.group.get_group_type_display(),
                 'name': self.group.name,
@@ -70,7 +71,7 @@ class Publication(models.Model):
         if self.parent:
             def build_parent(obj, parent):
                 obj['parent'] = {
-                    'id': parent.id,
+                    'id': parent.slug,
                     'title': parent.title,
                 }
                 if parent.parent:
@@ -78,12 +79,23 @@ class Publication(models.Model):
             build_parent(publication_obj, self.parent)
         return publication_obj
 
+    def save(self, *args, **kwargs):
+        if not self.id:
+            super().save(*args, **kwargs)
+            step = Step(
+                publication=self,
+                step_type='created',
+            ).save()
+        else:
+            super().save(*args, **kwargs)
+
 
 class Step(models.Model):
     """Step represents a step in the process of publication."""
 
     # The type of step that is currently being taken.
     STEP_TYPES = (
+        ('created', 'Publication created'),
         ('query_received', 'Query received'),
         ('query_approved', 'Query approved'),
         ('query_rejected', 'Query rejected'),
@@ -305,7 +317,7 @@ class Step(models.Model):
 
     # Steps from which you cannot go backward in the order. To get around this
     # requires a force flag to be passed to save.
-    IRREVERSABLE_STEPS = (
+    IRREVERSIBLE_STEPS = (
         'query_approved',
         'manuscript_approved',
         'contract_approved',
@@ -345,7 +357,7 @@ class Step(models.Model):
                 return
             if prev in FINAL_STEPS:
                 raise Step.StepFinalViolation(prev)
-            if (prev in IRREVERSABLE_STEPS and
+            if (prev in IRREVERSIBLE_STEPS and
                     ORDERED_STEPS.index(self.step_type) <
                     ORDERED_STEPS.index(prev)):
                 raise Step.StepReverseViolation(prev)

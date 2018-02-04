@@ -50,6 +50,7 @@ class Actor(models.Model):
         ('thirdparty', 'Third party')
     )
 
+    slug = models.SlugField()
     name = models.CharField(max_length=250)
     actor_type = models.CharField(max_length=10, choices=ACTOR_TYPES)
     pseudonym = models.CharField(max_length=250, blank=True)
@@ -65,7 +66,7 @@ class Actor(models.Model):
 
     def json_repr(self, include_groups=True, include_publications=True):
         actor_obj = {
-            'id': self.id,
+            'id': self.slug,
             'name': self.name,
             'type': self.actor_type,
             'type_display': self.get_actor_type_display(),
