@@ -3,10 +3,14 @@ VENV=venv
 $(VENV):
 	virtualenv $(VENV) --python=`which python3`
 
-.PHONY: deps
-deps: $(VENV)
+$(VENV)/bin/django-admin: $(VENV)
 	$(VENV)/bin/pip install -r requirements.txt
+
+tracker/media/app/node_modules:
 	cd tracker/media/app && npm install
+
+.PHONY: deps
+deps: $(VENV)/bin/django-admin tracker/media/app/node_modules
 
 .PHONY: run
 run: $(VENV)/bin/django-admin tracker/media/app/node_modules/.bin/browserify
@@ -34,5 +38,5 @@ check: lint test
 .PHONY: clean
 clean:
 	rm -rf $(VENV)
-	rm -rf tracker/media/node_modules
+	rm -rf tracker/media/app/node_modules
 	find . -name '*.py[co]' -exec rm {} \;
