@@ -13,23 +13,23 @@ tracker/media/app/node_modules:
 deps: $(VENV)/bin/django-admin tracker/media/app/node_modules
 
 .PHONY: run
-run: $(VENV)/bin/django-admin tracker/media/app/node_modules/.bin/browserify
+run: deps
 	cd tracker && ../$(VENV)/bin/python manage.py runserver
 
 .PHONY: migrate
-migrate: $(VENV)/bin/django-admin tracker/media/app/node_modules/.bin/browserify
+migrate: deps
 	cd tracker && ../$(VENV)/bin/python manage.py migrate
 
 .PHONY: migrations
-migrations: $(VENV)/bin/django-admin tracker/media/app/node_modules/.bin/browserify
+migrations: deps
 	cd tracker && ../$(VENV)/bin/python manage.py makemigrations
 
 .PHONY: lint
-lint: $(VENV)/bin/django-admin tracker/media/app/node_modules/.bin/browserify
+lint: deps
 	flake8
 
 .PHONY: test
-test: $(VENV)/bin/django-admin tracker/media/app/node_modules/.bin/browserify
+test: deps
 	cd tracker && ../$(VENV)/bin/python manage.py test
 
 .PHONY: check
