@@ -45,10 +45,10 @@ def list_actors(request):
 
 
 @login_required
-def get_actor(request, actor_id):
+def get_actor(request, slug):
     """Retrieve an actor and return a JSON blob of its info."""
     try:
-        actor = Actor.objects.get(pk=actor_id)
+        actor = Actor.objects.get(slug=slug)
     except Actor.DoesNotExist:
         return error(404, 'actor not found')
     return success(actor.json_repr())
@@ -77,12 +77,12 @@ def create_group(request):
 @login_required
 def add_actor_to_group(request, group_id):
     """Add an actor to the specified group."""
-    actor = request.GET.get('actor')
+    # actor = request.GET.get('actor')
     pass
 
 
 @login_required
 def remove_actor_from_group(request, group_id):
     """Remove an actor from the specified group."""
-    actor = request.GET.get('actor')
+    # actor = request.GET.get('actor')
     pass

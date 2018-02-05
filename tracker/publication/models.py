@@ -82,7 +82,7 @@ class Publication(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             super().save(*args, **kwargs)
-            step = Step(
+            Step(
                 publication=self,
                 step_type='created',
             ).save()
@@ -169,6 +169,7 @@ class Step(models.Model):
     # The general flow that steps take. To not follow the flow requires a force
     # flag to be passed to save.
     STEP_FLOW = {
+        'created': ['query_received', 'solicited'],
         'query_received': ['query_approved', 'query_rejected'],
         'query_approved': ['solicited'],
         'solicited': ['manuscript_received'],
@@ -196,7 +197,7 @@ class Step(models.Model):
             'copy_edits_changes_requested',
         ],
         'copy_edits_changes_requested': ['copy_edits_pass'],
-        'copy_edits_approved': ['layout_pass', 'layout_skipped',],
+        'copy_edits_approved': ['layout_pass', 'layout_skipped'],
         'layout_pass': ['layout_sent'],
         'layout_sent': [
             'layout_approved'
@@ -307,8 +308,8 @@ class Step(models.Model):
         ],
     }
 
-    # Steps which have no following step. To follow these steps requires a force
-    # flag to be passed to save.
+    # Steps which have no following step. To follow these steps requires a
+    # force flag to be passed to save.
     FINAL_STEPS = (
         'query_rejected',
         'manuscript_rejected',
@@ -355,13 +356,13 @@ class Step(models.Model):
             except (Publication.DoesNotExist, IndexError):
                 super(Step, self).save()
                 return
-            if prev in FINAL_STEPS:
+            if prev in self.FINAL_STEPS:
                 raise Step.StepFinalViolation(prev)
-            if (prev in IRREVERSIBLE_STEPS and
-                    ORDERED_STEPS.index(self.step_type) <
-                    ORDERED_STEPS.index(prev)):
+            if (prev in self.IRREVERSIBLE_STEPS and
+                    self.ORDERED_STEPS.index(self.step_type) <
+                    self.ORDERED_STEPS.index(prev)):
                 raise Step.StepReverseViolation(prev)
-            if self.step_type not in STEP_FLOW[prev]:
+            if self.step_type not in self.STEP_FLOW[prev]:
                 raise Step.StepOrderViolation(prev)
         super().save(*args, **kwargs)
 

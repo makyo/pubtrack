@@ -1,13 +1,13 @@
 from django.test import TestCase
 
 from .models import (
-    Attachment,
+    # Attachment,
     Publication,
     Step,
 )
 from actor.models import (
     Actor,
-    Group,
+    # Group,
 )
 
 
@@ -85,7 +85,7 @@ class TestStepModel(TestCase):
         step.save()
         self.assertEqual(
             str(step),
-            'Step: Query received for Doctors and how to date them' )
+            'Step: Query received for Doctors and how to date them')
 
     def test_json_repr(self):
         pass
