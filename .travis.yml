@@ -4,4 +4,5 @@ python:
 install:
     - pip install -r requirements.txt
 script:
-    - make check
+    - flake8
+    - python tracker/manage.py test
